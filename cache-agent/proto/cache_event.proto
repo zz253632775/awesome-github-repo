@@ -1,0 +1,34 @@
+syntax = "proto3";
+package cacheevent.v1;
+
+option go_package = "cache-agent/proto;cacheeventv1";
+
+enum CacheTier {
+  CACHE_TIER_UNSPECIFIED = 0;
+  CACHE_TIER_TMPFS = 1;
+  CACHE_TIER_SSD = 2;
+}
+
+service CacheEventService {
+  rpc NotifyChanged(NotifyChangedRequest) returns (NotifyResponse);
+  rpc NotifyDeleted(NotifyDeletedRequest) returns (NotifyResponse);
+}
+
+message NotifyChangedRequest {
+  string path = 1;
+  int64 mtime_unix = 2;
+  int64 size = 3;
+  string event_id = 4;
+  CacheTier tier = 5;
+}
+
+message NotifyDeletedRequest {
+  string path = 1;
+  string event_id = 2;
+  optional CacheTier tier = 3;
+}
+
+message NotifyResponse {
+  bool accepted = 1;
+  string message = 2;
+}

@@ -1,1 +1,4 @@
 .DS_Store
+# Local generated SQLite databases
+fund_analysis/*.db
+fund_analysis/*.db-*

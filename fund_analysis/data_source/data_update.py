@@ -1,7 +1,7 @@
 """Incremental data update orchestration."""
 from __future__ import annotations
 import logging, sqlite3
-from datetime import datetime
+from fund_analysis.collector.batch_collector import BatchCollectResult, collect_all_fund_positions
 from fund_analysis.collector.fund_position_collector import collect_period
 from fund_analysis.database.sqlite import upsert_many
 
@@ -17,6 +17,18 @@ def update_stock_basic(conn: sqlite3.Connection, client) -> int:
 
 def update_fund_positions(conn: sqlite3.Connection, client, report_date: str) -> int:
     return collect_period(conn, client, report_date)
+
+
+def update_all_fund_positions(
+    conn: sqlite3.Connection,
+    client,
+    start_year: int,
+    end_year: int,
+    sleep_seconds: float = 0.2,
+    max_funds: int | None = None,
+    retry_failed: bool = True,
+) -> BatchCollectResult:
+    return collect_all_fund_positions(conn, client, start_year, end_year, sleep_seconds, max_funds, retry_failed)
 
 
 def update_daily_prices(conn: sqlite3.Connection, client, stock_codes: list[str], start_date: str, end_date: str) -> int:

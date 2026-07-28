@@ -96,4 +96,22 @@ CREATE TABLE IF NOT EXISTS stock_score (
     created_at TEXT NOT NULL,
     PRIMARY KEY(stock_code, report_date)
 );
+
+CREATE TABLE IF NOT EXISTS data_update_log (
+    id INTEGER PRIMARY KEY AUTOINCREMENT,
+    source TEXT NOT NULL,
+    task_type TEXT NOT NULL,
+    fund_code TEXT DEFAULT '',
+    stock_code TEXT DEFAULT '',
+    report_date TEXT NOT NULL,
+    start_time TEXT,
+    end_time TEXT,
+    status TEXT NOT NULL,
+    row_count INTEGER DEFAULT 0,
+    error_message TEXT,
+    retry_count INTEGER DEFAULT 0,
+    UNIQUE(source, task_type, fund_code, stock_code, report_date)
+);
+
+CREATE INDEX IF NOT EXISTS idx_update_log_status ON data_update_log(status, task_type, report_date);
 """

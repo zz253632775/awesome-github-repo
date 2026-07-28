@@ -8,7 +8,7 @@ def build_change(conn: sqlite3.Connection, current_period: str, previous_period:
     INSERT INTO stock_fund_change
       (stock_code,current_period,previous_period,fund_count_change,fund_count_growth,
        market_value_change,market_value_growth,hold_shares_change,hold_shares_growth)
-    SELECT c.stock_code, c.report_date, p.report_date,
+    SELECT c.stock_code, c.report_date, ?,
            c.fund_count - COALESCE(p.fund_count,0),
            CASE WHEN COALESCE(p.fund_count,0)>0 THEN 1.0*(c.fund_count-p.fund_count)/p.fund_count ELSE NULL END,
            c.total_market_value - COALESCE(p.total_market_value,0),
@@ -26,7 +26,7 @@ def build_change(conn: sqlite3.Connection, current_period: str, previous_period:
       hold_shares_change=excluded.hold_shares_change,
       hold_shares_growth=excluded.hold_shares_growth
     """
-    return conn.execute(sql, (previous_period, current_period)).rowcount
+    return conn.execute(sql, (previous_period, previous_period, current_period)).rowcount
 
 
 def ranked_changes(conn: sqlite3.Connection, current_period: str, metric: str, limit: int = 100, ascending: bool = False):
